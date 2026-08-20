@@ -36,23 +36,43 @@
         letter-spacing: 0.04em;
       }
 
-      .timeline-container {
+      .timeline-stage {
+        position: relative;
         width: 100vw;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 24px;
-        padding: 0 20px;
+        height: 100vh;
+      }
+
+      .divider {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 4px;
+        background: rgba(148, 163, 184, 0.9);
+        transform: translateX(-50%);
       }
 
       .timeline {
-        width: calc(50% - 12px);
-        min-width: 0;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
         height: 40px;
         display: flex;
         align-items: center;
         gap: 2px;
         padding: 0;
+      }
+
+      #past-row {
+        right: 50%;
+        margin-right: 12px;
+        justify-content: flex-end;
+      }
+
+      #future-row {
+        left: 50%;
+        margin-left: 12px;
+        justify-content: flex-start;
       }
 
       .row {
@@ -99,7 +119,8 @@
   </head>
   <body>
     <div id="count" class="count">Rectangles: 0</div>
-    <div class="timeline-container">
+    <div class="timeline-stage">
+      <div class="divider" aria-hidden="true"></div>
       <div id="past-row" class="timeline" aria-label="Past timeline"></div>
       <div id="future-row" class="timeline" aria-label="Future timeline"></div>
     </div>
