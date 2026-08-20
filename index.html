@@ -3,81 +3,84 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Web Project</title>
+    <title>Rectangle Row</title>
     <style>
-      :root {
-        --bg: #0f172a;
-        --panel: #111827;
-        --primary: #38bdf8;
-        --accent: #22c55e;
-        --text: #e2e8f0;
-        --muted: #94a3b8;
-      }
-
       * {
         box-sizing: border-box;
       }
 
+      html,
       body {
         margin: 0;
+        height: 100%;
+        background: #0f172a;
         font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, var(--bg), #1e293b);
-        color: var(--text);
+      }
+
+      body {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         min-height: 100vh;
-        display: grid;
-        place-items: center;
       }
 
-      .card {
-        width: min(90vw, 700px);
-        background: rgba(17, 24, 39, 0.9);
-        border: 1px solid rgba(148, 163, 184, 0.2);
-        border-radius: 18px;
-        padding: 40px 32px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-        text-align: center;
-      }
-
-      h1 {
-        margin: 0 0 16px;
-        font-size: clamp(2rem, 5vw, 3.5rem);
-      }
-
-      p {
-        margin: 0 auto 24px;
-        max-width: 52ch;
-        line-height: 1.6;
-        color: var(--muted);
-      }
-
-      .btn {
-        display: inline-block;
-        padding: 12px 22px;
-        border-radius: 999px;
-        background: var(--primary);
-        color: #082f49;
-        text-decoration: none;
+      .count {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #d9fdd3;
+        font-size: 18px;
         font-weight: 700;
-        transition:
-          transform 0.2s ease,
-          filter 0.2s ease;
+        letter-spacing: 0.04em;
       }
 
-      .btn:hover {
-        transform: translateY(-2px);
-        filter: brightness(1.1);
+      .row {
+        width: 100vw;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        padding: 0;
+      }
+
+      .rect {
+        height: 30px;
+        border-width: 2px;
+        border-style: solid;
+      }
+
+      .rect.design1 {
+        background: #01530b;
+        border-color: #50914c;
+      }
+
+      .rect.design2 {
+        background: #96141460;
+        border-color: #c54747;
+      }
+
+      .rect.design3 {
+        background: #00c91b;
+        border-color: #00e91f;
+        transform: translateY(-30px);
+      }
+
+      .rect.design4 {
+        background: #ff1818;
+        border-color: #ffff2c;
+      }
+
+      .rect.design5 {
+        background: #6d660c;
+        border-color: #a09612;
       }
     </style>
   </head>
   <body>
-    <main class="card">
-      <h1>Hello, world!</h1>
-      <p>
-        This is a simple single-page website created as a fresh HTML project.
-        You can edit the content here to build your own landing page, portfolio,
-        or app showcase.
-      </p>
-      <a class="btn" href="#">Get Started</a>
-    </main>
+    <div id="count" class="count">Rectangles: 0</div>
+    <div id="row" class="row" aria-label="Rectangle row"></div>
+    <script src="script.js"></script>
   </body>
 </html>
