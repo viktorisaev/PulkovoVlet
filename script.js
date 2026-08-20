@@ -13,6 +13,8 @@ const fallbackFlights = [
     estimated: "2026-08-20T15:55:00.000",
   },
   {
+    TimeStamp: "2026-08-20T15:00:00.000",
+
     name: "Nizhnekamsk",
     status: "departured",
     planned: "2026-08-20T10:00:00.000",
@@ -264,6 +266,12 @@ const fallbackFlights = [
     status: "cancelled",
     planned: "2026-08-20T18:50:00.000",
   },
+
+  {
+    name: "Belgrade",
+    status: "estimated",
+    planned: "2026-08-20T23:40:00.000",
+  },
 ];
 
 function toTimelineItem(flight) {
@@ -271,6 +279,14 @@ function toTimelineItem(flight) {
     case "departured":
       return [
         { name: flight.name, timestamp: flight.actual, design: "design3" },
+      ];
+    case "estimated":
+      return [
+        {
+          name: flight.name,
+          timestamp: flight.estimated ?? flight.planned,
+          design: "design1",
+        },
       ];
     case "delayed":
       return [

@@ -90,28 +90,66 @@
         border-style: solid;
       }
 
-      .rect.design1 {
+      .legend {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        padding: 0 24px;
+        background: rgba(15, 23, 42, 0.96);
+        border-top: 1px solid rgba(148, 163, 184, 0.3);
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #e2e8f0;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+      }
+
+      .legend-swatch {
+        width: 28px;
+        height: 18px;
+        border-width: 2px;
+        border-style: solid;
+        display: inline-block;
+      }
+
+      .rect.design1,
+      .legend-swatch.design1 {
         background: #01530b;
         border-color: #50914c;
       }
 
-      .rect.design2 {
+      .rect.design2,
+      .legend-swatch.design2 {
         background: #96141460;
         border-color: #c54747;
       }
 
-      .rect.design3 {
+      .rect.design3,
+      .legend-swatch.design3 {
         background: #00c91b;
         border-color: #00e91f;
-        transform: translateY(-30px);
       }
 
-      .rect.design4 {
+      .rect.design4,
+      .legend-swatch.design4 {
         background: #ff1818;
         border-color: #ffff2c;
       }
 
-      .rect.design5 {
+      .rect.design5,
+      .legend-swatch.design5 {
         background: #6d660c;
         border-color: #a09612;
       }
@@ -124,6 +162,25 @@
       <div id="past-row" class="timeline" aria-label="Past timeline"></div>
       <div id="future-row" class="timeline" aria-label="Future timeline"></div>
     </div>
+
+    <div class="legend" aria-label="Flight status legend">
+      <div class="legend-item">
+        <span class="legend-swatch design1"></span><span>Estimated</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-swatch design3"></span><span>Departured</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-swatch design2"></span><span>Delayed</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-swatch design5"></span><span>EstimatedDelayed</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-swatch design4"></span><span>Cancelled</span>
+      </div>
+    </div>
+
     <script src="script.js"></script>
   </body>
 </html>
