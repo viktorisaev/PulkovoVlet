@@ -3,8 +3,6 @@ const countDisplay = document.getElementById("count");
 const pastRow = document.getElementById("past-row");
 const futureRow = document.getElementById("future-row");
 
-const timerightnow = "2026-08-20T15:00:00.000";
-
 const fallbackFlights = [
   {
     name: "Bobruysk",
@@ -270,110 +268,13 @@ const fallbackFlights = [
   {
     name: "Belgrade",
     status: "estimated",
-    planned: "2026-08-20T23:40:00.000",
+    planned: "2026-08-20T18:40:00.000",
   },
 ];
 
-function toTimelineItem(flight) {
-  switch (flight.status) {
-    case "departured":
-      return [
-        {
-          name: flight.name,
-          timestamp: flight.actual,
-          design: "design3",
-          outofrow: true,
-        },
-      ];
-    case "estimated":
-      return [
-        {
-          name: flight.name,
-          timestamp: flight.estimated ?? flight.planned,
-          design: "design1",
-        },
-      ];
-    case "delayed":
-      return [
-        { name: flight.name, timestamp: flight.planned, design: "design2" },
-        { name: flight.name, timestamp: flight.estimated, design: "design5" },
-      ];
-    case "cancelled":
-      return [
-        { name: flight.name, timestamp: flight.planned, design: "design4" },
-      ];
-    default:
-      return [];
-  }
-}
-
-function buildTimeline(flights) {
-  return flights
-    .flatMap(toTimelineItem)
-    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-}
-
-function splitTimeline(timeline) {
-  return timeline.reduce(
-    (groups, item) => {
-      if (new Date(item.timestamp) < new Date(timerightnow)) {
-        groups.before.push(item);
-      } else {
-        groups.after.push(item);
-      }
-      return groups;
-    },
-    { before: [], after: [] },
-  );
-}
-
-async function loadTimeline() {
-  return splitTimeline(buildTimeline(fallbackFlights));
-}
-
-function createTimelineRect({ name, design, outofrow }) {
-  const rect = document.createElement("div");
-  rect.className = `rect ${design}`;
-  if (outofrow) {
-    rect.classList.add("outofrow");
-  }
-  rect.style.width = "12px";
-  rect.title = `${name ?? "Unknown"}`;
-  return rect;
-}
-
-function drawTimeline(rowElement, timeline, itemLimit) {
-  const gap = 2;
-  const rectWidth = 12;
-  const sidePadding = 24;
-
-  rowElement.innerHTML = "";
-  rowElement.style.width = `${itemLimit * (rectWidth + gap) - gap}px`;
-
-  const itemsToRender = timeline.slice(-itemLimit);
-
-  itemsToRender.forEach((item) => {
-    rowElement.appendChild(createTimelineRect(item));
-  });
-}
-
-function drawTimelineFuture(rowElement, timeline, itemLimit) {
-  const gap = 2;
-  const rectWidth = 12;
-
-  rowElement.innerHTML = "";
-  rowElement.style.width = `${itemLimit * (rectWidth + gap) - gap}px`;
-
-  const itemsToRender = timeline.slice(0, itemLimit);
-
-  itemsToRender.forEach((item) => {
-    rowElement.appendChild(createTimelineRect(item));
-  });
-}
-
-async function drawRectangles() {
+async function presentCurrentState() {
   try {
-    const { before, after } = await loadTimeline();
+    const { before, after } = await loadTimeline(fallbackFlights);
     const gap = 2;
     const rectWidth = 12;
     const sidePadding = 24;
@@ -391,5 +292,5 @@ async function drawRectangles() {
   }
 }
 
-drawRectangles();
-window.addEventListener("resize", drawRectangles);
+presentCurrentState();
+window.addEventListener("resize", presentCurrentState);
