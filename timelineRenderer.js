@@ -1,11 +1,11 @@
-function createTimelineRect({ name, design, outofrow }) {
+function createTimelineRect({ flight, name, design, outofrow }) {
   const rect = document.createElement("div");
   rect.className = `rect ${design}`;
   if (outofrow) {
     rect.classList.add("outstanding");
   }
   rect.style.width = "12px";
-  rect.title = `${name ?? "Unknown"}`;
+  rect.title = `${name ?? "Unknown"} - ${flight ?? "Unknown"}`;
   return rect;
 }
 

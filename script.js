@@ -272,7 +272,21 @@ const fallbackFlights = [
   },
 ];
 
-// to long
+function findFirstTimestamp(listFlights) {
+  if (!Array.isArray(listFlights)) return null;
+
+  for (const flight of listFlights) {
+    if (
+      flight &&
+      typeof flight === "object" &&
+      Object.prototype.hasOwnProperty.call(flight, "TimeStamp")
+    ) {
+      return flight.TimeStamp;
+    }
+  }
+
+  return null;
+}
 
 function parseFlightsFromJson(jsonText) {
   try {
@@ -298,6 +312,14 @@ function parseFlightsFromJson(jsonText) {
           mappedFlight.actual = flight.OD_ATD;
         }
 
+        if (flight.OD_FLIGHT_NUMBER) {
+          mappedFlight.flight = flight.OD_FLIGHT_NUMBER;
+        }
+
+        if (flight.TimeStamp) {
+          mappedFlight.TimeStamp = flight.TimeStamp;
+        }
+
         return mappedFlight;
       });
   } catch (error) {
@@ -307,8 +329,11 @@ function parseFlightsFromJson(jsonText) {
 }
 
 async function presentCurrentState(allFlights) {
+  const timerightnow =
+    findFirstTimestamp(allFlights) || new Date().toISOString();
+
   try {
-    const { before, after } = await loadTimeline(allFlights);
+    const { before, after } = await loadTimeline(allFlights, timerightnow);
     const gap = 2;
     const rectWidth = 12;
     const sidePadding = 24;
@@ -320,7 +345,7 @@ async function presentCurrentState(allFlights) {
 
     drawTimeline(pastRow, before, itemLimit);
     drawTimelineFuture(futureRow, after, itemLimit);
-    countDisplay.textContent = `Past: ${before.length} | Future: ${after.length}`;
+    countDisplay.textContent = `Now: ${timerightnow} | Past: ${before.length} | Future: ${after.length}`;
   } catch (error) {
     console.error("Unable to render timeline:", error);
   }
@@ -335,4 +360,4 @@ var flightsToday = parseFlightsFromJson(aaa);
 // });
 
 presentCurrentState(flightsToday);
-window.addEventListener("resize", presentCurrentState);
+window.addEventListener("resize", presentCurrentState(flightsToday));
