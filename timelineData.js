@@ -2,7 +2,7 @@ const timerightnow = "2026-08-20T15:00:00.000";
 
 function toTimelineItem(flight) {
   switch (flight.status) {
-    case "departured":
+    case "Departed":
       return [
         {
           name: flight.name,
@@ -11,7 +11,7 @@ function toTimelineItem(flight) {
           outofrow: true,
         },
       ];
-    case "estimated":
+    case "Estimated":
       return [
         {
           name: flight.name,
@@ -19,12 +19,12 @@ function toTimelineItem(flight) {
           design: "design1",
         },
       ];
-    case "delayed":
+    case "Delayed":
       return [
         { name: flight.name, timestamp: flight.planned, design: "design2" },
         { name: flight.name, timestamp: flight.estimated, design: "design5" },
       ];
-    case "cancelled":
+    case "Cancelled":
       return [
         { name: flight.name, timestamp: flight.planned, design: "design4" },
       ];
