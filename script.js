@@ -278,7 +278,12 @@ function toTimelineItem(flight) {
   switch (flight.status) {
     case "departured":
       return [
-        { name: flight.name, timestamp: flight.actual, design: "design3" },
+        {
+          name: flight.name,
+          timestamp: flight.actual,
+          design: "design3",
+          outofrow: true,
+        },
       ];
     case "estimated":
       return [
@@ -326,6 +331,17 @@ async function loadTimeline() {
   return splitTimeline(buildTimeline(fallbackFlights));
 }
 
+function createTimelineRect({ name, design, outofrow }) {
+  const rect = document.createElement("div");
+  rect.className = `rect ${design}`;
+  if (outofrow) {
+    rect.classList.add("outofrow");
+  }
+  rect.style.width = "12px";
+  rect.title = `${name ?? "Unknown"}`;
+  return rect;
+}
+
 function drawTimeline(rowElement, timeline, itemLimit) {
   const gap = 2;
   const rectWidth = 12;
@@ -336,12 +352,8 @@ function drawTimeline(rowElement, timeline, itemLimit) {
 
   const itemsToRender = timeline.slice(-itemLimit);
 
-  itemsToRender.forEach(({ name, timestamp, design }) => {
-    const rect = document.createElement("div");
-    rect.className = `rect ${design}`;
-    rect.style.width = `${rectWidth}px`;
-    rect.title = `${name ?? "Unknown"}`;
-    rowElement.appendChild(rect);
+  itemsToRender.forEach((item) => {
+    rowElement.appendChild(createTimelineRect(item));
   });
 }
 
@@ -354,12 +366,8 @@ function drawTimelineFuture(rowElement, timeline, itemLimit) {
 
   const itemsToRender = timeline.slice(0, itemLimit);
 
-  itemsToRender.forEach(({ name, timestamp, design }) => {
-    const rect = document.createElement("div");
-    rect.className = `rect ${design}`;
-    rect.style.width = `${rectWidth}px`;
-    rect.title = `${name ?? "Unknown"}`;
-    rowElement.appendChild(rect);
+  itemsToRender.forEach((item) => {
+    rowElement.appendChild(createTimelineRect(item));
   });
 }
 
