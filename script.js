@@ -1,5 +1,6 @@
 const row = document.getElementById("row");
 const countDisplay = document.getElementById("count");
+const countdownDisplay = document.getElementById("countdown");
 const pastRow = document.getElementById("past-row");
 const futureRow = document.getElementById("future-row");
 
@@ -390,4 +391,43 @@ async function initializeFlights() {
   window.addEventListener("resize", () => presentCurrentState(flightsToday));
 }
 
+const UPDATE_INTERVAL_MS = 11 * 60 * 1000;
+let nextUpdateAt = Date.now() + UPDATE_INTERVAL_MS;
+
+function formatCountdown(ms) {
+  const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+function updateCountdownDisplay() {
+  const remainingMs = Math.max(0, nextUpdateAt - Date.now());
+  countdownDisplay.textContent = `Next update in ${formatCountdown(remainingMs)}`;
+}
+
+async function refreshFlights() {
+  const flightsToday = await loadActualFlights();
+  await presentCurrentState(flightsToday);
+  nextUpdateAt = Date.now() + UPDATE_INTERVAL_MS;
+  updateCountdownDisplay();
+}
+
+function startAutoRefresh() {
+  updateCountdownDisplay();
+
+  setInterval(() => {
+    const remainingMs = nextUpdateAt - Date.now();
+
+    if (remainingMs <= 0) {
+      refreshFlights();
+      return;
+    }
+
+    updateCountdownDisplay();
+  }, 1000);
+}
+
 initializeFlights();
+startAutoRefresh();

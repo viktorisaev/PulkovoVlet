@@ -36,6 +36,21 @@
         letter-spacing: 0.04em;
       }
 
+      .countdown {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: #f8fafc;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        border-radius: 999px;
+        padding: 8px 14px;
+        white-space: nowrap;
+      }
+
       .timeline-stage {
         position: relative;
         width: 100vw;
@@ -161,6 +176,7 @@
   </head>
   <body>
     <div id="count" class="count">Loading...</div>
+    <div id="countdown" class="countdown">Next update in XX:XX</div>
     <div class="timeline-stage">
       <div class="divider" aria-hidden="true"></div>
       <div id="past-row" class="timeline" aria-label="Past timeline"></div>
