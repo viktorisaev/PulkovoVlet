@@ -36,6 +36,18 @@
         letter-spacing: 0.04em;
       }
 
+      .last-departure {
+        position: absolute;
+        top: 48px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #e2e8f0;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        opacity: 0.9;
+      }
+
       .countdown {
         position: absolute;
         top: 20px;
@@ -103,6 +115,21 @@
         height: 30px;
         border-width: 2px;
         border-style: solid;
+      }
+
+      .title {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        padding: 0 24px;
+        background: rgba(15, 23, 42, 0.96);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.3);
       }
 
       .legend {
@@ -175,12 +202,16 @@
     </style>
   </head>
   <body>
-    <div id="count" class="count">Loading...</div>
     <div id="countdown" class="countdown">Next update in XX:XX</div>
     <div class="timeline-stage">
       <div class="divider" aria-hidden="true"></div>
       <div id="past-row" class="timeline" aria-label="Past timeline"></div>
       <div id="future-row" class="timeline" aria-label="Future timeline"></div>
+    </div>
+
+    <div class="title" aria-label="Current time and last departure information">
+      <div id="count" class="count">Loading...</div>
+      <div id="last-departure" class="last-departure">Last departure: --</div>
     </div>
 
     <div class="legend" aria-label="Flight status legend">

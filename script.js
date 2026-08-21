@@ -1,6 +1,7 @@
 const row = document.getElementById("row");
 const countDisplay = document.getElementById("count");
 const countdownDisplay = document.getElementById("countdown");
+const lastDepartureDisplay = document.getElementById("last-departure");
 const pastRow = document.getElementById("past-row");
 const futureRow = document.getElementById("future-row");
 
@@ -380,6 +381,7 @@ async function presentCurrentState(allFlights) {
     drawTimeline(pastRow, before, itemLimit);
     drawTimelineFuture(futureRow, after, itemLimit);
     countDisplay.textContent = `Now: ${timerightnow.toLocaleString()}`;
+    updateLastDepartureDisplay(allFlights, timerightnow);
   } catch (error) {
     console.error("Unable to render timeline:", error);
   }
@@ -427,6 +429,83 @@ function startAutoRefresh() {
 
     updateCountdownDisplay();
   }, 1000);
+}
+
+function getLatestDepartureDate(flights, timerightnow) {
+  if (!Array.isArray(flights) || !timerightnow) return null;
+
+  const departureDates = flights
+    .filter(
+      (flight) =>
+        flight &&
+        typeof flight === "object" &&
+        !(flight.status || "").toLowerCase().includes("cancelled"),
+    )
+    .map((flight) => {
+      const rawDeparture = flight.actual || flight.estimated || flight.planned;
+      if (!rawDeparture) return null;
+
+      const parsedDate = new Date(rawDeparture);
+      if (Number.isNaN(parsedDate.getTime()) || parsedDate > timerightnow) {
+        return null;
+      }
+
+      return parsedDate;
+    })
+    .filter((date) => date instanceof Date && !Number.isNaN(date.getTime()));
+
+  if (departureDates.length === 0) return null;
+
+  departureDates.sort((a, b) => b.getTime() - a.getTime());
+  return departureDates[0];
+}
+
+function calculateLastDepartureTimespan(flights, timerightnow) {
+  const lastDepartureDate = getLatestDepartureDate(flights, timerightnow);
+
+  if (!lastDepartureDate) return null;
+
+  var lastDepartureTimespan = Math.max(
+    0,
+    timerightnow.getTime() - lastDepartureDate.getTime(),
+  );
+
+  console.log("Last departure date:", lastDepartureDate);
+  console.log("Last departure timespan:", lastDepartureTimespan);
+  return lastDepartureTimespan;
+}
+
+function formatDuration(ms) {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  console.log(
+    "total seconds:",
+    totalSeconds,
+    "hours:",
+    hours,
+    "minutes:",
+    minutes,
+    "seconds:",
+    seconds,
+  );
+
+  return `${String(minutes)} minutes`;
+}
+
+function updateLastDepartureDisplay(flights, timerightnow) {
+  const lastDepartureTimespan = calculateLastDepartureTimespan(
+    flights,
+    timerightnow,
+  );
+
+  if (lastDepartureTimespan === null) {
+    lastDepartureDisplay.textContent = "Last departure: --";
+    return;
+  }
+
+  lastDepartureDisplay.textContent = `Last departure: ${formatDuration(lastDepartureTimespan)} ago`;
 }
 
 initializeFlights();
