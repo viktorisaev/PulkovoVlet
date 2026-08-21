@@ -272,7 +272,7 @@ const fallbackFlights = [
   },
 ];
 
-function findFirstTimestamp(listFlights) {
+function findCurrentTimeFromResponse(listFlights) {
   if (!Array.isArray(listFlights)) return null;
 
   for (const flight of listFlights) {
@@ -281,16 +281,19 @@ function findFirstTimestamp(listFlights) {
       typeof flight === "object" &&
       Object.prototype.hasOwnProperty.call(flight, "TimeStamp")
     ) {
-      return flight.TimeStamp;
+      return new Date(flight.TimeStamp); // Convert to DateTime type
     }
   }
 
-  return null;
+  return new Date();
 }
 
 function parseFlightsFromJson(jsonText) {
   try {
-    const parsed = JSON.parse(jsonText || "[]");
+    const parsed =
+      typeof jsonText === "string"
+        ? JSON.parse(jsonText || "[]")
+        : (jsonText ?? []);
     const flights = Array.isArray(parsed) ? parsed : [parsed];
 
     return flights
@@ -328,9 +331,29 @@ function parseFlightsFromJson(jsonText) {
   }
 }
 
+async function loadFlightsToday() {
+  try {
+    const response = await fetch(
+      "https://pulkovoairport.ru/api/?type=departure&when=0",
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return parseFlightsFromJson(data);
+  } catch (error) {
+    console.error(
+      "Unable to load flights from remote API, using fallback data",
+      error,
+    );
+    return parseFlightsFromJson(fallbackFlights);
+  }
+}
+
 async function presentCurrentState(allFlights) {
-  const timerightnow =
-    findFirstTimestamp(allFlights) || new Date().toISOString();
+  const timerightnow = findCurrentTimeFromResponse(allFlights);
 
   try {
     const { before, after } = await loadTimeline(allFlights, timerightnow);
@@ -345,19 +368,16 @@ async function presentCurrentState(allFlights) {
 
     drawTimeline(pastRow, before, itemLimit);
     drawTimelineFuture(futureRow, after, itemLimit);
-    countDisplay.textContent = `Now: ${timerightnow} | Past: ${before.length} | Future: ${after.length}`;
+    countDisplay.textContent = `Now: ${timerightnow.toLocaleString()}`;
   } catch (error) {
     console.error("Unable to render timeline:", error);
   }
 }
 
-var flightsToday = parseFlightsFromJson(aaa);
+async function initializeFlights() {
+  const flightsToday = await loadFlightsToday();
+  presentCurrentState(flightsToday);
+  window.addEventListener("resize", () => presentCurrentState(flightsToday));
+}
 
-// flightsToday.forEach((flight, i) => {
-//   console.log(
-//     `${i}: Status: ${flight.status}, Flight: ${flight.name}, Planned: ${flight.planned}, Estimated: ${flight.estimated}, Actual: ${flight.actual}`,
-//   );
-// });
-
-presentCurrentState(flightsToday);
-window.addEventListener("resize", presentCurrentState(flightsToday));
+initializeFlights();
