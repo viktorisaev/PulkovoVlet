@@ -290,10 +290,7 @@ function findCurrentTimeFromResponse(listFlights) {
 
 function parseFlightsFromJson(jsonText) {
   try {
-    const parsed =
-      typeof jsonText === "string"
-        ? JSON.parse(jsonText || "[]")
-        : (jsonText ?? []);
+    const parsed = jsonText;
     const flights = Array.isArray(parsed) ? parsed : [parsed];
 
     return flights
@@ -331,18 +328,31 @@ function parseFlightsFromJson(jsonText) {
   }
 }
 
-async function loadFlightsToday() {
+async function loadActualFlights() {
+  const urls = [
+    "https://pulkovoairport.ru/api/?type=departure&when=-1",
+    "https://pulkovoairport.ru/api/?type=departure&when=0",
+    "https://pulkovoairport.ru/api/?type=departure&when=+1",
+  ];
+
   try {
-    const response = await fetch(
-      "https://pulkovoairport.ru/api/?type=departure&when=0",
+    const responses = await Promise.all(
+      urls.map(async (url) => {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        return response.json();
+      }),
     );
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
+    const combinedRawFlights = responses.flatMap((data) =>
+      Array.isArray(data) ? data : [data],
+    );
 
-    const data = await response.json();
-    return parseFlightsFromJson(data);
+    return parseFlightsFromJson(combinedRawFlights);
   } catch (error) {
     console.error(
       "Unable to load flights from remote API, using fallback data",
@@ -375,7 +385,7 @@ async function presentCurrentState(allFlights) {
 }
 
 async function initializeFlights() {
-  const flightsToday = await loadFlightsToday();
+  const flightsToday = await loadActualFlights();
   presentCurrentState(flightsToday);
   window.addEventListener("resize", () => presentCurrentState(flightsToday));
 }
